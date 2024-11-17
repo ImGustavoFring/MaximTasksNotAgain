@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebAPI.Services;
+using Logic.Services;
 
 namespace WebAPI.Controllers
 {
@@ -8,10 +9,13 @@ namespace WebAPI.Controllers
     public class StringProcessorController : ControllerBase
     {
         private readonly IStringProcessorService _stringProcessorService;
+        private readonly ICharacterCounterService _characterCounterService;
 
-        public StringProcessorController(IStringProcessorService stringProcessorService)
+        public StringProcessorController(IStringProcessorService stringProcessorService,
+            ICharacterCounterService characterCounterService)
         {
             _stringProcessorService = stringProcessorService;
+            _characterCounterService = characterCounterService;
         }
 
         [HttpPost]
@@ -19,14 +23,18 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var result = _stringProcessorService.ProcessString(input);
-                return Ok(new { ProcessedString = result });
+                var processedString = _stringProcessorService.ProcessString(input);
+                var characterStatistics = _characterCounterService.CountCharacterOccurrences(processedString);
+
+                return Ok(new
+                {
+                    ProcessedString = processedString,
+                    CharacterCounts = characterStatistics
+                });
             }
             catch (Exception ex)
             {
-                {
-                    return BadRequest(ex.Message);
-                }
+                return BadRequest(new { Error = ex.Message });
             }
         }
     }
