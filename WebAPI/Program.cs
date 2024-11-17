@@ -1,3 +1,4 @@
+using Logic.Services;
 using WebAPI.Services;
 
 namespace WebAPI
@@ -13,7 +14,7 @@ namespace WebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddScoped<IStringProcessorService, StringProcessorService>();
+            builder.Services.AddScoped<IStringProcessorService, EnhancedStringProcessorService>();
 
             var app = builder.Build();
 

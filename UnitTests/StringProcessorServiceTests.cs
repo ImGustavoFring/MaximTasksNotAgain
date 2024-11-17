@@ -4,12 +4,7 @@ namespace UnitTests
 {
     public class StringProcessorServiceTests
     {
-        private readonly IStringProcessorService _service;
-
-        public StringProcessorServiceTests()
-        {
-            _service = new StringProcessorService();
-        }
+        protected virtual IStringProcessorService service => new StringProcessorService();
 
         [Fact]
         public void ProcessStringEvenLengthReturnsProcessedString()
@@ -17,7 +12,7 @@ namespace UnitTests
             var input = "abcdef";
             var expected = "cbafed";
 
-            var result = _service.ProcessString(input);
+            var result = service.ProcessString(input);
 
             Assert.Equal(expected, result);
         }
@@ -28,7 +23,7 @@ namespace UnitTests
             var input = "abcde";
             var expected = "edcbaabcde";
 
-            var result = _service.ProcessString(input);
+            var result = service.ProcessString(input);
 
             Assert.Equal(expected, result);
         }
@@ -38,7 +33,7 @@ namespace UnitTests
         {
             string input = null;
 
-            var exception = Assert.Throws<ArgumentException>(() => _service.ProcessString(input));
+            var exception = Assert.Throws<ArgumentException>(() => service.ProcessString(input));
             Assert.Equal("Input string cannot be null or empty.", exception.Message);
         }
 
@@ -47,7 +42,7 @@ namespace UnitTests
         {
             var input = "";
 
-            var exception = Assert.Throws<ArgumentException>(() => _service.ProcessString(input));
+            var exception = Assert.Throws<ArgumentException>(() => service.ProcessString(input));
             Assert.Equal("Input string cannot be null or empty.", exception.Message);
         }
 
@@ -56,7 +51,7 @@ namespace UnitTests
         {
             var input = "   ";
 
-            var exception = Assert.Throws<ArgumentException>(() => _service.ProcessString(input));
+            var exception = Assert.Throws<ArgumentException>(() => service.ProcessString(input));
             Assert.Equal("Input string cannot be null or empty.", exception.Message);
         }
     }
