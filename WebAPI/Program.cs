@@ -15,6 +15,7 @@ namespace WebAPI
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<IStringProcessorService, EnhancedStringProcessorService>();
+            builder.Services.AddScoped<ICharacterCounterService, CharacterCounterService>();
 
             var app = builder.Build();
 
