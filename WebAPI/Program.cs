@@ -17,6 +17,8 @@ namespace WebAPI
             builder.Services.AddScoped<IStringProcessorService, EnhancedStringProcessorService>();
             builder.Services.AddScoped<ICharacterCounterService, CharacterCounterService>();
             builder.Services.AddScoped<ILongestVowelSubstringService, LongestVowelSubstringService>();
+            builder.Services.AddScoped<IStringSorter, QuickSortStringSorter>();
+            builder.Services.AddScoped<IStringSorter, TreeSortStringSorter>();
 
             var app = builder.Build();
 
