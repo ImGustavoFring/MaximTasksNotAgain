@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WebAPI.Services;
 
 namespace Logic.Services
 {
     public class EnhancedStringProcessorService : IStringProcessorService
     {
-        private string _validChars = "abcdefghijklmnopqrstuvwxyz";
+        private readonly List<string> _blackList;
+        private readonly string _validChars = "abcdefghijklmnopqrstuvwxyz";
+
+        public EnhancedStringProcessorService(List<string> blackList)
+        {
+            _blackList = blackList;
+        }
+
         public string ProcessString(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -17,8 +22,15 @@ namespace Logic.Services
                 throw new ArgumentException("Input string cannot be null or empty.");
             }
 
-            var invalidCharacters = CheckInvalidCharacters(input);
+            foreach (var blackListItem in _blackList)
+            {
+                if (input.Contains(blackListItem))
+                {
+                    throw new ArgumentException($"Input contains invalid substring: '{blackListItem}'");
+                }
+            }
 
+            var invalidCharacters = CheckInvalidCharacters(input);
             if (invalidCharacters.Any())
             {
                 throw new ArgumentException($"Input contains invalid characters: {string.Join(", ", invalidCharacters)}");
@@ -47,8 +59,7 @@ namespace Logic.Services
 
         private List<char> CheckInvalidCharacters(string input)
         {
-            var invalidChars = input.Where(c => !_validChars.Contains(c)).ToList();
-            return invalidChars;
+            return input.Where(c => !_validChars.Contains(c)).ToList();
         }
     }
 }
