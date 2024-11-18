@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebAPI.Services;
 using Logic.Services;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
@@ -10,12 +10,16 @@ namespace WebAPI.Controllers
     {
         private readonly IStringProcessorService _stringProcessorService;
         private readonly ICharacterCounterService _characterCounterService;
+        private readonly ILongestVowelSubstringService _vowelSubstringService;
 
-        public StringProcessorController(IStringProcessorService stringProcessorService,
-            ICharacterCounterService characterCounterService)
+        public StringProcessorController(
+            IStringProcessorService stringProcessorService,
+            ICharacterCounterService characterCounterService,
+            ILongestVowelSubstringService vowelSubstringService)
         {
             _stringProcessorService = stringProcessorService;
             _characterCounterService = characterCounterService;
+            _vowelSubstringService = vowelSubstringService;
         }
 
         [HttpPost]
@@ -25,11 +29,13 @@ namespace WebAPI.Controllers
             {
                 var processedString = _stringProcessorService.ProcessString(input);
                 var characterStatistics = _characterCounterService.CountCharacterOccurrences(processedString);
+                var longestVowelSubstring = _vowelSubstringService.FindLongestVowelSubstring(processedString);
 
                 return Ok(new
                 {
                     ProcessedString = processedString,
-                    CharacterCounts = characterStatistics
+                    CharacterCounts = characterStatistics,
+                    LongestVowelSubstring = longestVowelSubstring
                 });
             }
             catch (Exception ex)
