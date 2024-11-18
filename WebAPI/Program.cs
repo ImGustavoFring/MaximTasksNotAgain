@@ -14,11 +14,13 @@ namespace WebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddScoped<IStringProcessorService, EnhancedStringProcessorService>();
-            builder.Services.AddScoped<ICharacterCounterService, CharacterCounterService>();
-            builder.Services.AddScoped<ILongestVowelSubstringService, LongestVowelSubstringService>();
-            builder.Services.AddScoped<IStringSorter, QuickSortStringSorter>();
-            builder.Services.AddScoped<IStringSorter, TreeSortStringSorter>();
+            builder.Services.AddSingleton<IStringProcessorService, EnhancedStringProcessorService>();
+            builder.Services.AddSingleton<ICharacterCounterService, CharacterCounterService>();
+            builder.Services.AddSingleton<ILongestVowelSubstringService, LongestVowelSubstringService>();
+            builder.Services.AddSingleton<IStringSorter, QuickSortStringSorter>();
+            builder.Services.AddSingleton<IStringSorter, TreeSortStringSorter>();
+
+            builder.Services.AddHttpClient<IRandomNumberService, RandomNumberService>();
 
             var app = builder.Build();
 

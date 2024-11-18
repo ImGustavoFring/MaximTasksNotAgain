@@ -14,27 +14,40 @@ namespace WebAPI.Controllers
         private readonly ILongestVowelSubstringService _vowelSubstringService;
         private readonly QuickSortStringSorter _quickSorter;
         private readonly TreeSortStringSorter _treeSorter;
+        private readonly IRandomNumberService _randomNumberService;
 
         public StringProcessorController(
             IStringProcessorService stringProcessorService,
             ICharacterCounterService characterCounterService,
-            ILongestVowelSubstringService vowelSubstringService)
+            ILongestVowelSubstringService vowelSubstringService,
+            IRandomNumberService randomNumberService)
         {
             _stringProcessorService = stringProcessorService;
             _characterCounterService = characterCounterService;
             _vowelSubstringService = vowelSubstringService;
+            _randomNumberService = randomNumberService;
             _quickSorter = new QuickSortStringSorter();
             _treeSorter = new TreeSortStringSorter();
         }
 
         [HttpPost]
-        public IActionResult ProcessString(string? input, SortMethod sortMethod = SortMethod.Quick)
+        public async Task<IActionResult> ProcessString(string? input,
+            SortMethod sortMethod = SortMethod.Quick)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    return BadRequest(new { Error = "Input string cannot be null or empty." });
+                }
+
                 var processedString = _stringProcessorService.ProcessString(input);
                 var characterStatistics = _characterCounterService.CountCharacterOccurrences(processedString);
                 var longestVowelSubstring = _vowelSubstringService.FindLongestVowelSubstring(processedString);
+
+                var randomIndex = await _randomNumberService.GetRandomNumberAsync(processedString.Length);
+
+                var truncatedString = processedString.Remove(randomIndex, 1);
 
                 IStringSorter sorter = sortMethod switch
                 {
@@ -51,7 +64,8 @@ namespace WebAPI.Controllers
                     CharacterCounts = characterStatistics,
                     LongestVowelSubstring = longestVowelSubstring,
                     SortType = sorter.ToString(),
-                    SortedString = sortedString
+                    SortedString = sortedString,
+                    TruncatedString = truncatedString
                 });
             }
             catch (Exception ex)
