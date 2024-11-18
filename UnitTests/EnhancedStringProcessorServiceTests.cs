@@ -10,7 +10,7 @@ namespace UnitTests
 {
     public class EnhancedStringProcessorServiceTests : StringProcessorServiceTests
     {
-        protected override IStringProcessorService service => new EnhancedStringProcessorService();
+        protected override IStringProcessorService service => new EnhancedStringProcessorService(new List<string>());
 
         [Fact]
         public void ProcessStringInvalidCharactersThrowsArgumentException()

@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Logic.Services
@@ -10,23 +8,22 @@ namespace Logic.Services
     public class RandomNumberService : IRandomNumberService
     {
         private readonly HttpClient _httpClient;
+        private readonly string _apiString;
 
-        public RandomNumberService(HttpClient httpClient)
+        public RandomNumberService(HttpClient httpClient, string apiString)
         {
             _httpClient = httpClient;
+            _apiString = apiString;
         }
 
         public async Task<int> GetRandomNumberAsync(int maxValue)
         {
             try
             {
-                var response = await _httpClient.GetStringAsync(
-                    $"http://www.randomnumberapi.com/api/v1.0/random?min=0&max={maxValue - 1}" +
-                    $"&count=1");
+                var response = await _httpClient.GetStringAsync($"{_apiString}/random?min=0&max={maxValue - 1}&count=1");
+                var numbers = JsonConvert.DeserializeObject<int[]>(response);
 
-                var number = JsonConvert.DeserializeObject<int[]>(response);
-
-                return number?[0] ?? new Random().Next(0, maxValue);
+                return numbers?[0] ?? new Random().Next(0, maxValue);
             }
             catch
             {
